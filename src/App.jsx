@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import "./style.css";
 import io from "socket.io-client";
-let socket = io.connect("https://appchat-fmj9.onrender.com/");
-
+const socket = io.connect("https://appchat-fmj9.onrender.com");
 socket.on("text_sender", (data,id) => {
   
   let text1 = `<div class=${id===socket.id?"you":"other"}>
-              <h1>${data}</h1>
+              <p>${data}</p>
   </div>`;
   console.log(id)
   document.querySelector(".message").innerHTML+=text1
@@ -17,24 +16,21 @@ socket.on("text_sender", (data,id) => {
 export default class App extends Component {
   arrText = [];
   state = {
-    chat: "",
-    left:"left",
-    right:"right",
     id:socket.id
   };
   a = true;
 
-  textMessage = async (event) => {
+  textMessage = async(event) => {
      
-      this.setState({
+    await  this.setState({
         chat: document.getElementById("inputMess").value,
-        position: "text-end",
+      
         id:socket.id
       });
       
    
      
-   await socket.emit("text_send", document.getElementById("inputMess").value,socket.id)
+  socket.emit("text_send",this.state.chat,socket.id)
 
       console.log(this.state.id)
    
@@ -59,20 +55,19 @@ export default class App extends Component {
         <div className="header">
           <h1>App chat</h1>
         </div>
-        <div className="reverse">
-          <div className="message">
+        <div className="reverse row">
+          <div className="message col-12">
               {/* <div className="you">
                   <h1>abc</h1>
-            </div>
-            <div className="other">
-                  <h1>abc</h1>
             </div> */}
+            <div className="other">
+            </div>
           </div>
         </div>
 
         <div className="footer">
           <form onSubmit={this.textMessage} className="form">
-            <div className="mb-3 d-flex">
+            <div className=" d-flex">
               <input
                 type="text"
                 className="form-control"
@@ -80,7 +75,7 @@ export default class App extends Component {
                 placeholder="Message"
               />
               <button type="submit" className="btn btn-primary">
-                Gui
+                Gửi
               </button>
             </div>
           </form>
